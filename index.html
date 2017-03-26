@@ -36,6 +36,12 @@
 		<div id="sidebar"></div>
 		<script src="map_locations.js"></script>
 		<script>
+			var presets = {"AttackUp":["Animal_Insect_G", "Item_Plant_G", "Item_Fruit_H", "TBox_Field_Stone:Item_Fruit_H", "Item_Mushroom_L",
+									   "Kibako_Contain_01:Item_Mushroom_L", "Animal_Fish_E", "Item_FishGet_E", "Animal_Insect_K", "Obj_LiftRockWhite_A_01:Animal_Insect_K", "Animal_Fish_F"],
+						   "MovingSpeed":["Animal_Insect_S", "Obj_LiftRockWhite_A_01:Animal_Insect_S", "Item_MushroomGet_D", "Item_Mushroom_D", "Item_PlantGet_M",
+										  "Item_Plant_M", "Animal_Insect_A", "Obj_LiftRockWhite_A_01:Animal_Insect_A", "Item_Plant_O", "Item_Fruit_E"],
+						   "Fireproof":["Animal_Insect_X", "Obj_LiftRockEldin_A_01:Animal_Insect_X"]};
+			
 			var map = L.map('botw_map', {
 				minZoom: 1,
 				maxZoom: 7,
@@ -104,6 +110,18 @@
 					markers[this.name] = undefined;
 				}
 			});
+			
+			var preset_names = Object.keys(presets);
+			for (var i=0; i<preset_names.length; i++) {
+				$('body').append('<div><a href="javascript:showPreset(\''+preset_names[i]+'\')">Preset: '+preset_names[i]+'</div>');
+			}
+			
+			function showPreset(name) {
+				$('input:checked').prop('checked', false).trigger("change");
+				for (var i=0; i<presets[name].length; i++) {
+					$('input[name="'+presets[name][i]+'"]').prop('checked', true).trigger("change");
+				}
+			};
 		</script>
 	</body>
 </html>
