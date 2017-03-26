@@ -1,6 +1,6 @@
 <html>
 	<head>
-		<title>Map</title>
+		<title>Breath of the Wild Object Map</title>
 		<script src='jquery-1.12.0.min.js'></script>
 		<link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.3/dist/leaflet.css" />
 		<script src="https://unpkg.com/leaflet@1.0.3/dist/leaflet.js"></script>
@@ -65,7 +65,6 @@
 				}
 			}
 			
-			var markers = [];
 			var icons = [L.divIcon({className: 'div-icon0'}),
 						 L.divIcon({className: 'div-icon1'}),
 						 L.divIcon({className: 'div-icon2'}),
@@ -78,22 +77,31 @@
 						 L.divIcon({className: 'div-icon9'}),
 						 L.divIcon({className: 'div-icon10'}),
 						 L.divIcon({className: 'div-icon11'})];
+						 
+			var markers = {};
 			
-			$('input').click(function () {
+			$('input').change(function () {
 			
-				for (var i=0; i<markers.length; i++) {
-					map.removeLayer(markers[i]);
-				}
-				markers = [];
-			
-				var checked_boxes = $('input:checked').map(function(){return this.name;});
-				
-				for (var i=0; i<locations.length; i++) {
-					var indexOfName = Array.indexOf(checked_boxes, locations[i].internal_name);
-					if (indexOfName >= 0) {
-						var coords = map.unproject([4*3000+2*locations[i].x, 4*2500+2*locations[i].y], map.getMaxZoom()-1);
-						markers[markers.length] = L.marker(coords, {icon: icons[indexOfName % 12]}).addTo(map);
+				if ($(this).is(':checked')) {
+					
+					markers[this.name] = [];
+					for (var i=0; i<locations.length; i++) {
+						if (locations[i].internal_name == this.name) {
+							var coords = map.unproject([4*3000+2*locations[i].x, 4*2500+2*locations[i].y], map.getMaxZoom()-1);
+							var name_str;
+							if (this.name == locations[i].display_name) {
+								name_str = this.name;
+							} else {
+								name_str = locations[i].display_name + ' -- ' + this.name;
+							}
+							markers[this.name].push(L.marker(coords, {icon: icons[object_internal_names.indexOf(this.name) % 12], title:name_str}).addTo(map));
+						}
 					}
+				} else {
+					for (var i=0; i<markers[this.name].length; i++) {
+						map.removeLayer(markers[this.name][i]);
+					}
+					markers[this.name] = undefined;
 				}
 			});
 		</script>
