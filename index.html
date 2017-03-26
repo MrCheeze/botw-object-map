@@ -40,7 +40,8 @@
 									   "Kibako_Contain_01:Item_Mushroom_L", "Animal_Fish_E", "Item_FishGet_E", "Animal_Insect_K", "Obj_LiftRockWhite_A_01:Animal_Insect_K", "Animal_Fish_F"],
 						   "MovingSpeed":["Animal_Insect_S", "Obj_LiftRockWhite_A_01:Animal_Insect_S", "Item_MushroomGet_D", "Item_Mushroom_D", "Item_PlantGet_M",
 										  "Item_Plant_M", "Animal_Insect_A", "Obj_LiftRockWhite_A_01:Animal_Insect_A", "Item_Plant_O", "Item_Fruit_E"],
-						   "Fireproof":["Animal_Insect_X", "Obj_LiftRockEldin_A_01:Animal_Insect_X"]};
+						   "Fireproof":["Animal_Insect_X", "Obj_LiftRockEldin_A_01:Animal_Insect_X"],
+						   "Nothing":[]};
 			
 			var map = L.map('botw_map', {
 				minZoom: 1,
@@ -104,10 +105,12 @@
 						}
 					}
 				} else {
-					for (var i=0; i<markers[this.name].length; i++) {
-						map.removeLayer(markers[this.name][i]);
+					if (markers[this.name] != undefined) {
+						for (var i=0; i<markers[this.name].length; i++) {
+							map.removeLayer(markers[this.name][i]);
+						}
+						markers[this.name] = undefined;
 					}
-					markers[this.name] = undefined;
 				}
 			});
 			
@@ -122,6 +125,21 @@
 					$('input[name="'+presets[name][i]+'"]').prop('checked', true).trigger("change");
 				}
 			};
+			
+			function showNear(x, y) {
+				for (var i=0; i<locations.length; i++) {
+					if (Math.abs(locations[i].x - x) < 100 && Math.abs(locations[i].y - y) < 100) {
+						var coords = map.unproject([4*3000+2*locations[i].x, 4*2500+2*locations[i].y], map.getMaxZoom()-1);
+						var name_str;
+						if (locations[i].internal_name == locations[i].display_name) {
+							name_str = locations[i].internal_name;
+						} else {
+							name_str = locations[i].display_name + ' -- ' + locations[i].internal_name;
+						}
+						L.marker(coords, {icon: icons[object_internal_names.indexOf(locations[i].internal_name) % 12], title:name_str}).addTo(map);
+					}
+				}
+			}
 		</script>
 	</body>
 </html>

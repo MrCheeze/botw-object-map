@@ -22,13 +22,17 @@ for actor in dropactor_objs:
         
     if len(drop_actors):
         drop_actor = drop_actors[0].text
-        print('{"internal_name":"%s", "display_name":"%s", "x":%g, "y":%g},' % (name+':'+drop_actor, nice_name+':'+object_names[drop_actor], float(coords[0][:-1]), float(coords[-1][:-1])))
+        print('{"internal_name":"%s", "display_name":"%s", "x":%g, "y":%g' % (name+':'+drop_actor, nice_name+':'+object_names[drop_actor], float(coords[0][:-1]), float(coords[-1][:-1])),end='')
     elif len(drop_tables):
         drop_table = drop_tables[0].text
         if drop_table == 'Normal':
-            print('{"internal_name":"%s", "display_name":"%s", "x":%g, "y":%g},' % (name, nice_name, float(coords[0][:-1]), float(coords[-1][:-1])))
+            print('{"internal_name":"%s", "display_name":"%s", "x":%g, "y":%g' % (name, nice_name, float(coords[0][:-1]), float(coords[-1][:-1])),end='')
         else:
-            print('{"internal_name":"%s", "display_name":"%s", "x":%g, "y":%g},' % (name+':'+drop_table, nice_name+':'+drop_table, float(coords[0][:-1]), float(coords[-1][:-1])))
+            print('{"internal_name":"%s", "display_name":"%s", "x":%g, "y":%g' % (name+':'+drop_table, nice_name+':'+drop_table, float(coords[0][:-1]), float(coords[-1][:-1])),end='')
     else:
-        print('{"internal_name":"%s", "display_name":"%s", "x":%g, "y":%g},' % (name, nice_name, float(coords[0][:-1]), float(coords[-1][:-1])))
+        print('{"internal_name":"%s", "display_name":"%s", "x":%g, "y":%g' % (name, nice_name, float(coords[0][:-1]), float(coords[-1][:-1])),end='')
     
+    scales = actor.findall('./Scale')
+    if len(scales):
+        print(', "scale": [%g,%g]' % (float(scales[0][0].text[:-1]), float(scales[0][-1].text[:-1])),end='')
+    print('},')
