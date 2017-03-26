@@ -1,0 +1,101 @@
+<html>
+	<head>
+		<title>Map</title>
+		<script src='jquery-1.12.0.min.js'></script>
+		<link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.3/dist/leaflet.css" />
+		<script src="https://unpkg.com/leaflet@1.0.3/dist/leaflet.js"></script>
+		<style>
+		#botw_map {
+			display: inline-block;
+			height: 99%;
+			width: 70%;
+		}
+		#sidebar {
+			display: inline-block;
+			height: 99%;
+			width: 29%;
+			overflow: scroll;
+			white-space: nowrap;
+		}
+		.div-icon0 { border-radius: 50%; border: 1px solid #00FFFF; }
+		.div-icon1 { border-radius: 50%; border: 1px solid #FFFF00; }
+		.div-icon2 { border-radius: 50%; border: 1px solid #FF00FF; }
+		.div-icon3 { border-radius: 50%; border: 1px solid #FF6060; }
+		.div-icon4 { border-radius: 50%; border: 1px solid #60FF60; }
+		.div-icon5 { border-radius: 50%; border: 1px solid #6060FF; }
+		.div-icon6 { border-radius: 50%; border: 1px solid #3080FF; }
+		.div-icon7 { border-radius: 50%; border: 1px solid #80FF30; }
+		.div-icon8 { border-radius: 50%; border: 1px solid #FF3080; }
+		.div-icon9 { border-radius: 50%; border: 1px solid #FF8030; }
+		.div-icon10 { border-radius: 50%; border: 1px solid #30FF40; }
+		.div-icon11 { border-radius: 50%; border: 1px solid #8030FF; }
+		</style>
+	</head>
+	<body>
+		<div id="botw_map"></div>
+		<div id="sidebar"></div>
+		<script src="map_locations.js"></script>
+		<script>
+			var map = L.map('botw_map', {
+				minZoom: 1,
+				maxZoom: 7,
+				center: [0, 0],
+				zoom: 1,
+				crs: L.CRS.Simple
+			});
+			var southWest = map.unproject([0, 4*5000], map.getMaxZoom()-1);
+			var northEast = map.unproject([4*6000, 0], map.getMaxZoom()-1);
+			var bounds = new L.LatLngBounds(southWest, northEast);
+			L.imageOverlay('BotW-Map.png', bounds).addTo(map);
+			map.setMaxBounds(bounds);
+			
+			var object_display_names = {};
+			for (var i=0; i<locations.length; i++) {
+				object_display_names[locations[i].internal_name] = locations[i].display_name;
+			}
+			var object_internal_names = Object.keys(object_display_names);
+			object_internal_names.sort();
+			for (var i=0; i<object_internal_names.length; i++) {
+				var internal_name = object_internal_names[i];
+				var display_name = object_display_names[internal_name];
+				if (internal_name == display_name) {
+					$('#sidebar').append('<div><input type="checkbox" name="'+internal_name+'"/>'+internal_name+'</div>');
+				} else {
+					$('#sidebar').append('<div><input type="checkbox" name="'+internal_name+'"/>'+display_name+' -- '+internal_name+'</div>');
+				}
+			}
+			
+			var markers = [];
+			var icons = [L.divIcon({className: 'div-icon0'}),
+						 L.divIcon({className: 'div-icon1'}),
+						 L.divIcon({className: 'div-icon2'}),
+						 L.divIcon({className: 'div-icon3'}),
+						 L.divIcon({className: 'div-icon4'}),
+						 L.divIcon({className: 'div-icon5'}),
+						 L.divIcon({className: 'div-icon6'}),
+						 L.divIcon({className: 'div-icon7'}),
+						 L.divIcon({className: 'div-icon8'}),
+						 L.divIcon({className: 'div-icon9'}),
+						 L.divIcon({className: 'div-icon10'}),
+						 L.divIcon({className: 'div-icon11'})];
+			
+			$('input').click(function () {
+			
+				for (var i=0; i<markers.length; i++) {
+					map.removeLayer(markers[i]);
+				}
+				markers = [];
+			
+				var checked_boxes = $('input:checked').map(function(){return this.name;});
+				
+				for (var i=0; i<locations.length; i++) {
+					var indexOfName = Array.indexOf(checked_boxes, locations[i].internal_name);
+					if (indexOfName >= 0) {
+						var coords = map.unproject([4*3000+2*locations[i].x, 4*2500+2*locations[i].y], map.getMaxZoom()-1);
+						markers[markers.length] = L.marker(coords, {icon: icons[indexOfName % 12]}).addTo(map);
+					}
+				}
+			});
+		</script>
+	</body>
+</html>
