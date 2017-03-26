@@ -46,13 +46,13 @@
 			
 			var map = L.map('botw_map', {
 				minZoom: 1,
-				maxZoom: 7,
+				maxZoom: 8,
 				center: [0, 0],
 				zoom: 1,
 				crs: L.CRS.Simple
 			});
-			var southWest = map.unproject([0, 4*5000], map.getMaxZoom()-1);
-			var northEast = map.unproject([4*6000, 0], map.getMaxZoom()-1);
+			var southWest = map.unproject([0, 8*5000], map.getMaxZoom()-1);
+			var northEast = map.unproject([8*6000, 0], map.getMaxZoom()-1);
 			var bounds = new L.LatLngBounds(southWest, northEast);
 			L.imageOverlay('BotW-Map.png', bounds).addTo(map);
 			map.setMaxBounds(bounds);
@@ -95,7 +95,7 @@
 					markers[this.name] = [];
 					for (var i=0; i<locations.length; i++) {
 						if (locations[i].internal_name == this.name) {
-							var coords = map.unproject([4*3000+2*locations[i].x, 4*2500+2*locations[i].y], map.getMaxZoom()-1);
+							var coords = map.unproject([8*3000+4*locations[i].x, 8*2500+4*locations[i].y], map.getMaxZoom()-1);
 							var name_str;
 							if (this.name == locations[i].display_name) {
 								name_str = this.name;
