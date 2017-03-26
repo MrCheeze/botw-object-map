@@ -130,7 +130,7 @@
 			function showNear(x, y) {
 				for (var i=0; i<locations.length; i++) {
 					if (Math.abs(locations[i].x - x) < 100 && Math.abs(locations[i].y - y) < 100) {
-						var coords = map.unproject([4*3000+2*locations[i].x, 4*2500+2*locations[i].y], map.getMaxZoom()-1);
+						var coords = map.unproject([8*3000+4*locations[i].x, 8*2500+4*locations[i].y], map.getMaxZoom()-1);
 						var name_str;
 						if (locations[i].internal_name == locations[i].display_name) {
 							name_str = locations[i].internal_name;
