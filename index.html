@@ -88,10 +88,15 @@
 						 L.divIcon({className: 'div-icon11'})];
 						 
 			var markers = {};
+			var names = [];
 			
 			$('input').change(function () {
 			
 				if ($(this).is(':checked')) {
+					
+					if (names.indexOf(this.name) < 0) {
+						names.push(this.name);
+					}
 					
 					markers[this.name] = [];
 					for (var i=0; i<locations.length; i++) {
@@ -103,7 +108,7 @@
 							} else {
 								name_str = locations[i].display_name + ' -- ' + this.name;
 							}
-							markers[this.name].push(L.marker(coords, {icon: icons[object_internal_names.indexOf(this.name) % 12], title:name_str}).addTo(map));
+							markers[this.name].push(L.marker(coords, {icon: icons[names.indexOf(this.name) % 12], title:name_str}).addTo(map));
 						}
 					}
 				} else {
