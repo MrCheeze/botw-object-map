@@ -43,6 +43,13 @@
 										  "Item_Plant_M", "Animal_Insect_A", "Obj_LiftRockWhite_A_01:Animal_Insect_A", "Item_Plant_O", "Item_Fruit_E",
 										  "Obj_Plant_Lotus_A_01","Obj_Plant_Lotus_A_02","Obj_Plant_Lotus_A_03","Item_PlantGet_O"],
 						   "Fireproof":["Animal_Insect_X", "Obj_LiftRockEldin_A_01:Animal_Insect_X"],
+						   "Cooking Pots":["Item_CookSet","Item_CookSet_PanOnly","Strange_Beacon_CookSet"],
+						   "Horses":["GameRomHorse00L","WildHorseCreateTag","WildHorseCreateTag01","WildHorseCreateTag02",
+									 "WildHorseCreateTag03","GameRomHorseBone","GameRomHorseNushi","GameRomHorseZelda"],
+						   "Overworld Bosses":["Enemy_Giant_Bone","Enemy_Giant_Bone_AllDay","Enemy_Giant_Junior","Enemy_Giant_Middle","Enemy_Giant_Senior",
+											   "Enemy_Golem_Fire","Enemy_Golem_Ice","Enemy_Golem_Junior","Enemy_Golem_Middle","Enemy_Golem_Senior",
+											   "Enemy_Lynel_Dark","Enemy_Lynel_Junior","Enemy_Lynel_Junior_Mountain","Enemy_Lynel_Middle","Enemy_Lynel_Senior",
+											   "Enemy_Sandworm","Enemy_Assassin_Senior"],
 						   "Nothing":[]};
 			
 			var map = L.map('botw_map', {
@@ -98,7 +105,7 @@
 					if (this.name == locations[this.name].display_name) {
 						name_str = this.name;
 					} else {
-						name_str = this.name + ' -- ' + locations[this.name].display_name;
+						name_str = locations[this.name].display_name + ' -- ' + this.name;
 					}
 					for (var i=0; i<locations[this.name].locations.length; i++) {
 						var coords = map.unproject([8*3000+4*locations[this.name].locations[i][0], 8*2500+4*locations[this.name].locations[i][1]], map.getMaxZoom()-1);
