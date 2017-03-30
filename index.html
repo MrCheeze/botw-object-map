@@ -38,10 +38,10 @@
 		<script src="map_locations.js"></script>
 		<script>
 			var presets = {"AttackUp":["Animal_Insect_G", "Item_Plant_G", "Item_Fruit_H", "TBox_Field_Stone:Item_Fruit_H", "Item_Mushroom_L",
-									   "Kibako_Contain_01:Item_Mushroom_L", "Animal_Fish_E", "Item_FishGet_E", "Animal_Insect_K", "Obj_LiftRockWhite_A_01:Animal_Insect_K", "Animal_Fish_F"],
+									   "Kibako_Contain_01:Item_Mushroom_L", "Animal_Fish_E", "Item_FishGet_E", "Animal_Insect_K", "Obj_LiftRockWhite_A_01:Animal_Insect_K", "Animal_Fish_F", "Item_FishGet_F"],
 						   "MovingSpeed":["Animal_Insect_S", "Obj_LiftRockWhite_A_01:Animal_Insect_S", "Item_MushroomGet_D", "Item_Mushroom_D", "Item_PlantGet_M",
 										  "Item_Plant_M", "Animal_Insect_A", "Obj_LiftRockWhite_A_01:Animal_Insect_A", "Item_Plant_O", "Item_Fruit_E",
-										  "Obj_Plant_Lotus_A_01","Obj_Plant_Lotus_A_02","Obj_Plant_Lotus_A_03"],
+										  "Obj_Plant_Lotus_A_01","Obj_Plant_Lotus_A_02","Obj_Plant_Lotus_A_03","Item_PlantGet_O"],
 						   "Fireproof":["Animal_Insect_X", "Obj_LiftRockEldin_A_01:Animal_Insect_X"],
 						   "Nothing":[]};
 			
@@ -55,18 +55,14 @@
 			var southWest = map.unproject([0, 8*5000], map.getMaxZoom()-1);
 			var northEast = map.unproject([8*6000, 0], map.getMaxZoom()-1);
 			var bounds = new L.LatLngBounds(southWest, northEast);
-			L.imageOverlay('BotW-Map.png', bounds).addTo(map);
+			L.imageOverlay('BotW-Map-Grid.png', bounds).addTo(map);
 			map.setMaxBounds(bounds);
 			
-			var object_display_names = {};
-			for (var i=0; i<locations.length; i++) {
-				object_display_names[locations[i].internal_name] = locations[i].display_name;
-			}
-			var object_internal_names = Object.keys(object_display_names);
-			object_internal_names.sort();
-			for (var i=0; i<object_internal_names.length; i++) {
-				var internal_name = object_internal_names[i];
-				var display_name = object_display_names[internal_name];
+			var internal_names = Object.keys(locations);
+			internal_names.sort();
+			for (var i=0; i<internal_names.length; i++) {
+				var internal_name = internal_names[i];
+				var display_name = locations[internal_name].display_name;
 				if (internal_name == display_name) {
 					$('#sidebar').append('<div><input type="checkbox" name="'+internal_name+'"/>'+internal_name+'</div>');
 				} else {
@@ -94,22 +90,19 @@
 			
 				if ($(this).is(':checked')) {
 					
+					markers[this.name] = [];
 					if (names.indexOf(this.name) < 0) {
 						names.push(this.name);
 					}
-					
-					markers[this.name] = [];
-					for (var i=0; i<locations.length; i++) {
-						if (locations[i].internal_name == this.name) {
-							var coords = map.unproject([8*3000+4*locations[i].x, 8*2500+4*locations[i].y], map.getMaxZoom()-1);
-							var name_str;
-							if (this.name == locations[i].display_name) {
-								name_str = this.name;
-							} else {
-								name_str = locations[i].display_name + ' -- ' + this.name;
-							}
-							markers[this.name].push(L.marker(coords, {icon: icons[names.indexOf(this.name) % 12], title:name_str}).addTo(map));
-						}
+					var name_str;
+					if (this.name == locations[this.name].display_name) {
+						name_str = this.name;
+					} else {
+						name_str = this.name + ' -- ' + locations[this.name].display_name;
+					}
+					for (var i=0; i<locations[this.name].locations.length; i++) {
+						var coords = map.unproject([8*3000+4*locations[this.name].locations[i][0], 8*2500+4*locations[this.name].locations[i][1]], map.getMaxZoom()-1);
+						markers[this.name].push(L.marker(coords, {icon: icons[names.indexOf(this.name) % 12], title:name_str}).addTo(map));
 					}
 				} else {
 					if (markers[this.name] != undefined) {
@@ -132,21 +125,6 @@
 					$('input[name="'+presets[name][i]+'"]').prop('checked', true).trigger("change");
 				}
 			};
-			
-			function showNear(x, y) {
-				for (var i=0; i<locations.length; i++) {
-					if (Math.abs(locations[i].x - x) < 100 && Math.abs(locations[i].y - y) < 100) {
-						var coords = map.unproject([8*3000+4*locations[i].x, 8*2500+4*locations[i].y], map.getMaxZoom()-1);
-						var name_str;
-						if (locations[i].internal_name == locations[i].display_name) {
-							name_str = locations[i].internal_name;
-						} else {
-							name_str = locations[i].display_name + ' -- ' + locations[i].internal_name;
-						}
-						L.marker(coords, {icon: icons[object_internal_names.indexOf(locations[i].internal_name) % 12], title:name_str}).addTo(map);
-					}
-				}
-			}
 		</script>
 	</body>
 </html>
