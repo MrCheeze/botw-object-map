@@ -2,8 +2,8 @@
 	<head>
 		<title>Breath of the Wild Object Map</title>
 		<script src='jquery-1.12.0.min.js'></script>
-		<link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.3/dist/leaflet.css" />
-		<script src="https://unpkg.com/leaflet@1.0.3/dist/leaflet.js"></script>
+		<link rel="stylesheet" href="leaflet.css" />
+		<script src="leaflet.js"></script>
 		<style>
 		#botw_map {
 			display: inline-block;
@@ -108,6 +108,24 @@
 						name_str = locations[this.name].display_name + ' -- ' + this.name;
 					}
 					for (var i=0; i<locations[this.name].locations.length; i++) {
+						if (locations[this.name].locations[i].length > 2) {
+							var x=locations[this.name].locations[i][0];
+							var y=locations[this.name].locations[i][1];
+							var extra_params = locations[this.name].locations[i][2];
+							var x1=x-extra_params.width*Math.cos(extra_params.rotation)-extra_params.height*Math.sin(extra_params.rotation);
+							var y1=y-extra_params.height*Math.cos(extra_params.rotation)+extra_params.width*Math.sin(extra_params.rotation);
+							var x2=x+extra_params.width*Math.cos(extra_params.rotation)-extra_params.height*Math.sin(extra_params.rotation);
+							var y2=y-extra_params.height*Math.cos(extra_params.rotation)-extra_params.width*Math.sin(extra_params.rotation);
+							var x3=x+extra_params.width*Math.cos(extra_params.rotation)+extra_params.height*Math.sin(extra_params.rotation);
+							var y3=y+extra_params.height*Math.cos(extra_params.rotation)-extra_params.width*Math.sin(extra_params.rotation);
+							var x4=x-extra_params.width*Math.cos(extra_params.rotation)+extra_params.height*Math.sin(extra_params.rotation);
+							var y4=y+extra_params.height*Math.cos(extra_params.rotation)+extra_params.width*Math.sin(extra_params.rotation);
+							var coords = [map.unproject([8*3000+4*x1, 8*2500+4*y1], map.getMaxZoom()-1),
+										  map.unproject([8*3000+4*x2, 8*2500+4*y2], map.getMaxZoom()-1),
+										  map.unproject([8*3000+4*x3, 8*2500+4*y3], map.getMaxZoom()-1),
+										  map.unproject([8*3000+4*x4, 8*2500+4*y4], map.getMaxZoom()-1)];x
+							markers[this.name].push(L.polygon(coords, {color:'#'+(0x1000000+(Math.random())*0xffffff).toString(16).substr(1,6)}).addTo(map));
+						}
 						var coords = map.unproject([8*3000+4*locations[this.name].locations[i][0], 8*2500+4*locations[this.name].locations[i][1]], map.getMaxZoom()-1);
 						markers[this.name].push(L.marker(coords, {icon: icons[names.indexOf(this.name) % 12], title:name_str}).addTo(map));
 					}
