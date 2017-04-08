@@ -4,6 +4,7 @@
 		<script src='jquery-1.12.0.min.js'></script>
 		<link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.3/dist/leaflet.css" />
 		<script src="https://unpkg.com/leaflet@1.0.3/dist/leaflet.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/list.js/1.5.0/list.min.js"></script>
 		<style>
 		#botw_map {
 			display: inline-block;
@@ -16,6 +17,10 @@
 			width: 29%;
 			overflow: scroll;
 			white-space: nowrap;
+		}
+		#sidebar li, #sidebar ul {
+			list-style-type: none;
+			padding: 0;
 		}
 		.div-icon0 { border-radius: 50%; border: 1px solid #00FFFF; background: rgba(0,255,255,0.05)}
 		.div-icon1 { border-radius: 50%; border: 1px solid #FFFF00; background: rgba(255,255,0,0.05) }
@@ -33,7 +38,10 @@
 	</head>
 	<body>
 		<div id="botw_map"></div>
-		<div id="sidebar"></div>
+		<div id="sidebar">
+			<input type="text" class="search" />
+			<ul class="list"></ul>
+		</div>
 		<div>Note that many objects are dynamically generated and are not included in this data.</div>
 		<script src="map_locations.js"></script>
 		<script>
@@ -67,16 +75,17 @@
 			
 			var internal_names = Object.keys(locations);
 			internal_names.sort();
+			var jqInsertElement = $('#sidebar > ul');
 			for (var i=0; i<internal_names.length; i++) {
 				var internal_name = internal_names[i];
 				var display_name = locations[internal_name].display_name;
 				if (internal_name == display_name) {
-					$('#sidebar').append('<div><input type="checkbox" name="'+internal_name+'"/>'+internal_name+'</div>');
+					jqInsertElement.append('<li><label><input type="checkbox" name="'+internal_name+'"/><span class="itemName">'+internal_name+'</span></label></li>');
 				} else {
-					$('#sidebar').append('<div><input type="checkbox" name="'+internal_name+'"/>'+display_name+' -- '+internal_name+'</div>');
+					jqInsertElement.append('<li><label><input type="checkbox" name="'+internal_name+'"/><span class="itemName">'+display_name+' -- '+internal_name+'</span></label></li>');
 				}
 			}
-			
+
 			var icons = [L.divIcon({className: 'div-icon0'}),
 						 L.divIcon({className: 'div-icon1'}),
 						 L.divIcon({className: 'div-icon2'}),
@@ -120,6 +129,8 @@
 					}
 				}
 			});
+
+			var sidebarList = new List("sidebar", { valueNames: ['itemName'] });
 			
 			var preset_names = Object.keys(presets);
 			for (var i=0; i<preset_names.length; i++) {
