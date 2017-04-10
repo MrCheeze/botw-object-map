@@ -39,7 +39,10 @@
 	<body>
 		<div id="botw_map"></div>
 		<div id="sidebar">
-			<input type="text" class="search" />
+			<div>
+				<input type="checkbox" id="selectAll" disabled />
+				<input type="text" class="search" />
+			</div>
 			<ul class="list"></ul>
 		</div>
 		<div>Note that many objects are dynamically generated and are not included in this data.</div>
@@ -104,7 +107,7 @@
 				var markers = {};
 				var names = [];
 				
-				$('input').change(function () {
+				$('.list input').change(function () {
 				
 					if ($(this).is(':checked')) {
 						
@@ -133,9 +136,21 @@
 				for (var i=0; i<preset_names.length; i++) {
 					$('body').append('<div><a href="javascript:showPreset(\''+preset_names[i]+'\')">Preset: '+preset_names[i]+'</div>');
 				}
-			
+
+				$('#selectAll').change(function() {
+					if ($(this).is(':checked')) {
+						$('.list input:checkbox:not(:checked)').prop('checked', true).trigger('change');
+					} else {
+						$('.list input:checkbox:checked').prop('checked', false).trigger('change');
+					}
+				});
+
+				sidebarList.on('searchComplete', function() {
+					$('#selectAll').prop('disabled', sidebarList.matchingItems.length > 1000);
+				});
+
 			});
-				
+
 			function showPreset(name) {
 				$('input:checked').prop('checked', false).trigger("change");
 				for (var i=0; i<presets[name].length; i++) {
