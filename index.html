@@ -142,6 +142,8 @@
 				for (var i=0; i<preset_names.length; i++) {
 					$('body').append('<div><a href="javascript:showPreset(\''+preset_names[i]+'\')">Preset: '+preset_names[i]+'</div>');
 				}
+			
+			});
 				
 				function showPreset(name) {
 					$('input:checked').prop('checked', false).trigger("change");
@@ -149,8 +151,6 @@
 						$('input[name="'+presets[name][i]+'"]').prop('checked', true).trigger("change");
 					}
 				};
-			
-			});
 		</script>
 	</body>
 </html>
