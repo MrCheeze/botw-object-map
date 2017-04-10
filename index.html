@@ -43,7 +43,6 @@
 			<ul class="list"></ul>
 		</div>
 		<div>Note that many objects are dynamically generated and are not included in this data.</div>
-		<script src="map_locations.js"></script>
 		<script>
 			var presets = {"AttackUp":["Animal_Insect_G", "Item_Plant_G", "Item_Fruit_H", "TBox_Field_Stone:Item_Fruit_H", "Item_Mushroom_L",
 									   "Kibako_Contain_01:Item_Mushroom_L", "Animal_Fish_E", "Item_FishGet_E", "Animal_Insect_K", "Obj_LiftRockWhite_A_01:Animal_Insect_K", "Animal_Fish_F", "Item_FishGet_F"],
@@ -73,76 +72,85 @@
 			L.imageOverlay('BotW-Map-Grid.png', bounds).addTo(map);
 			map.setMaxBounds(bounds);
 			
-			var internal_names = Object.keys(locations);
-			internal_names.sort();
-			var jqInsertElement = $('#sidebar > ul');
-			for (var i=0; i<internal_names.length; i++) {
-				var internal_name = internal_names[i];
-				var display_name = locations[internal_name].display_name;
-				if (internal_name == display_name) {
-					jqInsertElement.append('<li><label><input type="checkbox" name="'+internal_name+'"/><span class="itemName">'+internal_name+'</span></label></li>');
-				} else {
-					jqInsertElement.append('<li><label><input type="checkbox" name="'+internal_name+'"/><span class="itemName">'+display_name+' -- '+internal_name+'</span></label></li>');
-				}
+			var query = window.location.href.search('list=');
+			var locationfile = 'map_locations.js';
+			if (query > 0) {
+				locationfile = window.location.href.substr(window.location.href.search('list=')+5) + '.js';
 			}
-
-			var icons = [L.divIcon({className: 'div-icon0'}),
-						 L.divIcon({className: 'div-icon1'}),
-						 L.divIcon({className: 'div-icon2'}),
-						 L.divIcon({className: 'div-icon3'}),
-						 L.divIcon({className: 'div-icon4'}),
-						 L.divIcon({className: 'div-icon5'}),
-						 L.divIcon({className: 'div-icon6'}),
-						 L.divIcon({className: 'div-icon7'}),
-						 L.divIcon({className: 'div-icon8'}),
-						 L.divIcon({className: 'div-icon9'}),
-						 L.divIcon({className: 'div-icon10'}),
-						 L.divIcon({className: 'div-icon11'})];
-						 
-			var markers = {};
-			var names = [];
-			
-			$('input').change(function () {
-			
-				if ($(this).is(':checked')) {
-					
-					markers[this.name] = [];
-					if (names.indexOf(this.name) < 0) {
-						names.push(this.name);
-					}
-					var name_str;
-					if (this.name == locations[this.name].display_name) {
-						name_str = this.name;
+			$.getScript(locationfile, function() {
+				
+				var internal_names = Object.keys(locations);
+				internal_names.sort();
+				var jqInsertElement = $('#sidebar > ul');
+				for (var i=0; i<internal_names.length; i++) {
+					var internal_name = internal_names[i];
+					var display_name = locations[internal_name].display_name;
+					if (internal_name == display_name) {
+						jqInsertElement.append('<li><label><input type="checkbox" name="'+internal_name+'"/><span class="itemName">'+internal_name+'</span></label></li>');
 					} else {
-						name_str = locations[this.name].display_name + ' -- ' + this.name;
-					}
-					for (var i=0; i<locations[this.name].locations.length; i++) {
-						var coords = map.unproject([8*3000+4*locations[this.name].locations[i][0], 8*2500+4*locations[this.name].locations[i][1]], map.getMaxZoom()-1);
-						markers[this.name].push(L.marker(coords, {icon: icons[names.indexOf(this.name) % 12], title:name_str}).addTo(map));
-					}
-				} else {
-					if (markers[this.name] != undefined) {
-						for (var i=0; i<markers[this.name].length; i++) {
-							map.removeLayer(markers[this.name][i]);
-						}
-						markers[this.name] = undefined;
+						jqInsertElement.append('<li><label><input type="checkbox" name="'+internal_name+'"/><span class="itemName">'+display_name+' -- '+internal_name+'</span></label></li>');
 					}
 				}
-			});
 
-			var sidebarList = new List("sidebar", { valueNames: ['itemName'] });
-			
-			var preset_names = Object.keys(presets);
-			for (var i=0; i<preset_names.length; i++) {
-				$('body').append('<div><a href="javascript:showPreset(\''+preset_names[i]+'\')">Preset: '+preset_names[i]+'</div>');
-			}
-			
-			function showPreset(name) {
-				$('input:checked').prop('checked', false).trigger("change");
-				for (var i=0; i<presets[name].length; i++) {
-					$('input[name="'+presets[name][i]+'"]').prop('checked', true).trigger("change");
+				var icons = [L.divIcon({className: 'div-icon0'}),
+							 L.divIcon({className: 'div-icon1'}),
+							 L.divIcon({className: 'div-icon2'}),
+							 L.divIcon({className: 'div-icon3'}),
+							 L.divIcon({className: 'div-icon4'}),
+							 L.divIcon({className: 'div-icon5'}),
+							 L.divIcon({className: 'div-icon6'}),
+							 L.divIcon({className: 'div-icon7'}),
+							 L.divIcon({className: 'div-icon8'}),
+							 L.divIcon({className: 'div-icon9'}),
+							 L.divIcon({className: 'div-icon10'}),
+							 L.divIcon({className: 'div-icon11'})];
+							 
+				var markers = {};
+				var names = [];
+				
+				$('input').change(function () {
+				
+					if ($(this).is(':checked')) {
+						
+						markers[this.name] = [];
+						if (names.indexOf(this.name) < 0) {
+							names.push(this.name);
+						}
+						var name_str;
+						if (this.name == locations[this.name].display_name) {
+							name_str = this.name;
+						} else {
+							name_str = locations[this.name].display_name + ' -- ' + this.name;
+						}
+						for (var i=0; i<locations[this.name].locations.length; i++) {
+							var coords = map.unproject([8*3000+4*locations[this.name].locations[i][0], 8*2500+4*locations[this.name].locations[i][1]], map.getMaxZoom()-1);
+							markers[this.name].push(L.marker(coords, {icon: icons[names.indexOf(this.name) % 12], title:name_str}).addTo(map));
+						}
+					} else {
+						if (markers[this.name] != undefined) {
+							for (var i=0; i<markers[this.name].length; i++) {
+								map.removeLayer(markers[this.name][i]);
+							}
+							markers[this.name] = undefined;
+						}
+					}
+				});
+
+				var sidebarList = new List("sidebar", { valueNames: ['itemName'] });
+				
+				var preset_names = Object.keys(presets);
+				for (var i=0; i<preset_names.length; i++) {
+					$('body').append('<div><a href="javascript:showPreset(\''+preset_names[i]+'\')">Preset: '+preset_names[i]+'</div>');
 				}
-			};
+				
+				function showPreset(name) {
+					$('input:checked').prop('checked', false).trigger("change");
+					for (var i=0; i<presets[name].length; i++) {
+						$('input[name="'+presets[name][i]+'"]').prop('checked', true).trigger("change");
+					}
+				};
+			
+			});
 		</script>
 	</body>
 </html>
