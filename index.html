@@ -64,14 +64,14 @@
 			
 			var map = L.map('botw_map', {
 				preferCanvas: true,
-				minZoom: 1,
-				maxZoom: 8,
+				minZoom: -4,
+				maxZoom: 3,
 				center: [0, 0],
-				zoom: 1,
+				zoom: -4,
 				crs: L.CRS.Simple
 			});
-			var southWest = map.unproject([0, 8*5000], map.getMaxZoom()-1);
-			var northEast = map.unproject([8*6000, 0], map.getMaxZoom()-1);
+			var southWest = map.unproject([-6000, 5000], 0);
+			var northEast = map.unproject([6000, -5000], 0);
 			var bounds = new L.LatLngBounds(southWest, northEast);
 			L.imageOverlay('BotW-Map-Grid.png', bounds).addTo(map);
 			map.setMaxBounds(bounds);
@@ -107,18 +107,26 @@
 				var markers = {};
 				var names = [];
 				
+				// Note: in case we want to load the sidebar items asynchronously, using this style of event
+				// handler will apply to both current and future items
 				$('#sidebar > ul').on('change', 'input', function () {
-				
+
 					if ($(this).is(':checked')) {
-						
 						markers[this.name] = [];
 						if (names.indexOf(this.name) < 0) {
 							names.push(this.name);
 						}
-						var name_str = getDisplayName(this.name);
-						for (var i=0; i<locations[this.name].locations.length; i++) {
-							var coords = map.unproject([8*3000+4*locations[this.name].locations[i][0], 8*2500+4*locations[this.name].locations[i][1]], map.getMaxZoom()-1);
-							markers[this.name].push(L.marker(coords, {icon: icons[names.indexOf(this.name) % icons.length], title:name_str}).addTo(map));
+
+						var markerOptions = {
+							icon: icons[names.indexOf(this.name) % icons.length],
+							keyboard: false,
+							title: getDisplayName(this.name)
+						};
+
+						var targetLocations = locations[this.name].locations;
+						for (var i = 0; i < targetLocations.length; i++) {
+							var coords = map.unproject(targetLocations[i], 0);
+							markers[this.name].push(L.marker(coords, markerOptions).addTo(map));
 						}
 					} else {
 						if (markers[this.name] != undefined) {
