@@ -3,8 +3,10 @@
 		<title>Breath of the Wild Object Map</title>
 		<script src='jquery-1.12.0.min.js'></script>
 		<link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.3/dist/leaflet.css" />
+		<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.0.4/dist/MarkerCluster.css" />
 		<script src="https://unpkg.com/leaflet@1.0.3/dist/leaflet.js"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/list.js/1.5.0/list.min.js"></script>
+		<script src="https://unpkg.com/leaflet.markercluster@1.0.4/dist/leaflet.markercluster.js"></script>
 		<style>
 		#botw_map {
 			display: inline-block;
@@ -34,6 +36,14 @@
 		.div-icon9 { border-radius: 50%; border: 1px solid #FFC040; background: rgba(255,192,64,0.05) }
 		.div-icon10 { border-radius: 50%; border: 1px solid #40FFC0; background: rgba(64,255,192,0.05) }
 		.div-icon11 { border-radius: 50%; border: 1px solid #C040FF; background: rgba(192,64,255,0.05) }
+		.big-icon {
+			border-width: 2px;
+			text-align: center;
+			color: #fff;
+			text-shadow: 1px 0 0 #000, 0 -1px 0 #000, 0 1px 0 #000, -1px 0 0 #000;
+			height: 24px;
+			line-height: 24px;
+		}
 		</style>
 	</head>
 	<body>
@@ -65,7 +75,7 @@
 			var map = L.map('botw_map', {
 				preferCanvas: true,
 				minZoom: -4,
-				maxZoom: 3,
+				maxZoom: 4,
 				center: [0, 0],
 				zoom: -4,
 				crs: L.CRS.Simple
@@ -83,8 +93,7 @@
 			}
 			$.getScript(locationfile, function() {
 				
-				var internal_names = Object.keys(locations);
-				internal_names.sort();
+				var internal_names = Object.keys(locations).sort();
 				var listHtml = internal_names.map(internal_name =>
 					'<li><label><input type="checkbox" name="' + internal_name + '"/><span class="itemName">' + getDisplayName(internal_name) + '</span></label></li>'
 					).join("");
@@ -105,36 +114,61 @@
 							 L.divIcon({className: 'div-icon11'})];
 							 
 				var markers = {};
-				var names = [];
-				
+
+				var markerClusterGroupOptions = {
+					removeOutsideVisibleBounds: true,
+					spiderfyOnMaxZoom: false,
+					disableClusteringAtZoom: 2,
+					animate: false,
+					iconCreateFunction: function(cluster) {
+						var childMarkers = cluster.getAllChildMarkers();
+						var titleText = '';
+						var iconClassName = '';
+
+						if (childMarkers.length > 0) {
+							var childOptions = childMarkers[0].options;
+							titleText = childOptions.title;
+
+							if (childOptions.icon) {
+								iconClassName = childOptions.icon.options.className || '';
+							}
+						}
+						// Set the options and icon based on inherited child values
+						cluster.options.title = childMarkers.length + " x " + titleText;
+						return L.divIcon({
+							html: cluster.getChildCount(),
+							className: "big-icon " + iconClassName,
+							iconSize: [24, 24]
+						});
+					}
+				};
+
 				// Note: in case we want to load the sidebar items asynchronously, using this style of event
 				// handler will apply to both current and future items
 				$('#sidebar > ul').on('change', 'input', function () {
+					if (!(this.name in markers)) {
+						markers[this.name] = L.markerClusterGroup(markerClusterGroupOptions);
+					}
+					var groupMarker = markers[this.name];
 
 					if ($(this).is(':checked')) {
-						markers[this.name] = [];
-						if (names.indexOf(this.name) < 0) {
-							names.push(this.name);
-						}
 
 						var markerOptions = {
-							icon: icons[names.indexOf(this.name) % icons.length],
+							icon: icons[stringToValue(this.name) % icons.length],
 							keyboard: false,
 							title: getDisplayName(this.name)
 						};
 
 						var targetLocations = locations[this.name].locations;
-						for (var i = 0; i < targetLocations.length; i++) {
-							var coords = map.unproject(targetLocations[i], 0);
-							markers[this.name].push(L.marker(coords, markerOptions).addTo(map));
-						}
+						var newMarkers = targetLocations.map(target => {
+							var coords = map.unproject(target, 0);
+							return L.marker(coords, markerOptions);
+						});
+						groupMarker.addLayers(newMarkers);
+						map.addLayer(groupMarker);
 					} else {
-						if (markers[this.name] != undefined) {
-							for (var i=0; i<markers[this.name].length; i++) {
-								map.removeLayer(markers[this.name][i]);
-							}
-							markers[this.name] = undefined;
-						}
+						map.removeLayer(groupMarker);
+						groupMarker.clearLayers(); // Get some memory back?
 					}
 				});
 
@@ -158,6 +192,12 @@
 				});
 
 			});
+
+			// Turns a string into some consistent value, similar to a hash
+			function stringToValue(str) {
+				var validBase36String = str.replace(/[^0-9a-z]/gi, '');
+				return parseInt(validBase36String, 36);
+			};
 
 			function showPreset(name) {
 				$('input:checked').prop('checked', false).trigger("change");
