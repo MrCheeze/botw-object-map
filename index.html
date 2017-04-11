@@ -6,7 +6,7 @@
 		<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.0.4/dist/MarkerCluster.css" />
 		<script src="https://unpkg.com/leaflet@1.0.3/dist/leaflet.js"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/list.js/1.5.0/list.min.js"></script>
-		<script src="https://unpkg.com/leaflet.markercluster@1.0.4/dist/leaflet.markercluster.js"></script>
+		<script src="leaflet.markercluster.js"></script>
 		<style>
 		#botw_map {
 			display: inline-block;
@@ -41,8 +41,8 @@
 			text-align: center;
 			color: #fff;
 			text-shadow: 1px 0 0 #000, 0 -1px 0 #000, 0 1px 0 #000, -1px 0 0 #000;
-			height: 24px;
-			line-height: 24px;
+			height: 18px;
+			line-height: 18px;
 		}
 		</style>
 	</head>
@@ -50,8 +50,8 @@
 		<div id="botw_map"></div>
 		<div id="sidebar">
 			<div>
-				<input type="checkbox" id="selectAll" disabled title="Toggle search matches"/>
-				<input type="text" class="search" title="Search by name..."/>
+				<input type="checkbox" id="selectAll" disabled title="Toggle search matches" autocomplete="off"/>
+				<input type="text" class="search" title="Search by name..." autocomplete="off"/>
 			</div>
 			<ul class="list"></ul>
 		</div>
@@ -118,8 +118,9 @@
 				var markerClusterGroupOptions = {
 					removeOutsideVisibleBounds: true,
 					spiderfyOnMaxZoom: false,
-					disableClusteringAtZoom: 2,
+					disableClusteringAtZoom: 0,
 					animate: false,
+					maxClusterRadius: 20, 
 					iconCreateFunction: function(cluster) {
 						var childMarkers = cluster.getAllChildMarkers();
 						var titleText = '';
@@ -138,7 +139,7 @@
 						return L.divIcon({
 							html: cluster.getChildCount(),
 							className: "big-icon " + iconClassName,
-							iconSize: [24, 24]
+							iconSize: [18, 18]
 						});
 					}
 				};
