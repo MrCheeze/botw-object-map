@@ -63,6 +63,7 @@
 						   "Nothing":[]};
 			
 			var map = L.map('botw_map', {
+				preferCanvas: true,
 				minZoom: 1,
 				maxZoom: 8,
 				center: [0, 0],
@@ -84,12 +85,11 @@
 				
 				var internal_names = Object.keys(locations);
 				internal_names.sort();
-				var jqInsertElement = $('#sidebar > ul');
-				for (var i=0; i<internal_names.length; i++) {
-					var internal_name = internal_names[i];
-					var display_name = getDisplayName(internal_name);
-					jqInsertElement.append('<li><label><input type="checkbox" name="'+internal_name+'"/><span class="itemName">'+display_name+'</span></label></li>');
-				}
+				var listHtml = internal_names.map(internal_name =>
+					'<li><label><input type="checkbox" name="' + internal_name + '"/><span class="itemName">' + getDisplayName(internal_name) + '</span></label></li>'
+					).join("");
+
+				$('#sidebar > ul').append(listHtml);
 
 				var icons = [L.divIcon({className: 'div-icon0'}),
 							 L.divIcon({className: 'div-icon1'}),
@@ -107,7 +107,7 @@
 				var markers = {};
 				var names = [];
 				
-				$('.list input').change(function () {
+				$('#sidebar > ul').on('change', 'input', function () {
 				
 					if ($(this).is(':checked')) {
 						
@@ -118,7 +118,7 @@
 						var name_str = getDisplayName(this.name);
 						for (var i=0; i<locations[this.name].locations.length; i++) {
 							var coords = map.unproject([8*3000+4*locations[this.name].locations[i][0], 8*2500+4*locations[this.name].locations[i][1]], map.getMaxZoom()-1);
-							markers[this.name].push(L.marker(coords, {icon: icons[names.indexOf(this.name) % 12], title:name_str}).addTo(map));
+							markers[this.name].push(L.marker(coords, {icon: icons[names.indexOf(this.name) % icons.length], title:name_str}).addTo(map));
 						}
 					} else {
 						if (markers[this.name] != undefined) {
