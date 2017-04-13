@@ -24,18 +24,19 @@
 			list-style-type: none;
 			padding: 0;
 		}
-		.div-icon0 { border-radius: 50%; border: 1px solid #00FFFF; background: rgba(0,255,255,0.05)}
-		.div-icon1 { border-radius: 50%; border: 1px solid #FFFF00; background: rgba(255,255,0,0.05) }
-		.div-icon2 { border-radius: 50%; border: 1px solid #FF00FF; background: rgba(255,0,255,0.05) }
-		.div-icon3 { border-radius: 50%; border: 1px solid #FF6060; background: rgba(255,96,96,0.05) }
-		.div-icon4 { border-radius: 50%; border: 1px solid #60FF60; background: rgba(96,255,96,0.05) }
-		.div-icon5 { border-radius: 50%; border: 1px solid #6060FF; background: rgba(96,96,255,0.05) }
-		.div-icon6 { border-radius: 50%; border: 1px solid #40C0FF; background: rgba(64,192,255,0.05) }
-		.div-icon7 { border-radius: 50%; border: 1px solid #C0FF40; background: rgba(192,255,64,0.05) }
-		.div-icon8 { border-radius: 50%; border: 1px solid #FF40C0; background: rgba(255,64,192,0.05) }
-		.div-icon9 { border-radius: 50%; border: 1px solid #FFC040; background: rgba(255,192,64,0.05) }
-		.div-icon10 { border-radius: 50%; border: 1px solid #40FFC0; background: rgba(64,255,192,0.05) }
-		.div-icon11 { border-radius: 50%; border: 1px solid #C040FF; background: rgba(192,64,255,0.05) }
+		.div-icon0 { border-radius: 50%; border: 1px solid #00FFFF; background: rgba(0,255,255,0.25)}
+		.div-icon1 { border-radius: 50%; border: 1px solid #FFFF00; background: rgba(255,255,0,0.25) }
+		.div-icon2 { border-radius: 50%; border: 1px solid #FF00FF; background: rgba(255,0,255,0.25) }
+		.div-icon3 { border-radius: 50%; border: 1px solid #FF6060; background: rgba(255,96,96,0.25) }
+		.div-icon4 { border-radius: 50%; border: 1px solid #60FF60; background: rgba(96,255,96,0.25) }
+		.div-icon5 { border-radius: 50%; border: 1px solid #6030FF; background: rgba(96,48,255,0.25) }
+		.div-icon6 { border-radius: 50%; border: 1px solid #40C0FF; background: rgba(64,192,255,0.25) }
+		.div-icon7 { border-radius: 50%; border: 1px solid #C0FF40; background: rgba(192,255,64,0.25) }
+		.div-icon8 { border-radius: 50%; border: 1px solid #FF40C0; background: rgba(255,64,192,0.25) }
+		.div-icon9 { border-radius: 50%; border: 1px solid #FFC040; background: rgba(255,192,64,0.25) }
+		.div-icon10 { border-radius: 50%; border: 1px solid #40FFC0; background: rgba(64,255,192,0.25) }
+		.div-icon11 { border-radius: 50%; border: 1px solid #C040FF; background: rgba(192,64,255,0.25) }
+		.div-icon12 { border-radius: 50%; border: 1px solid #FFFFFF; background: rgba(255,255,255,0.25) }
 		.big-icon {
 			border-width: 2px;
 			text-align: center;
@@ -57,19 +58,20 @@
 		</div>
 		<div>Note that many objects are dynamically generated and are not included in this data.</div>
 		<script>
-			var presets = {"AttackUp":["Animal_Insect_G", "Item_Plant_G", "Item_Fruit_H", "TBox_Field_Stone:Item_Fruit_H", "Item_Mushroom_L",
-									   "Kibako_Contain_01:Item_Mushroom_L", "Animal_Fish_E", "Item_FishGet_E", "Animal_Insect_K", "Obj_LiftRockWhite_A_01:Animal_Insect_K", "Animal_Fish_F", "Item_FishGet_F"],
-						   "MovingSpeed":["Animal_Insect_S", "Obj_LiftRockWhite_A_01:Animal_Insect_S", "Item_MushroomGet_D", "Item_Mushroom_D", "Item_PlantGet_M",
-										  "Item_Plant_M", "Animal_Insect_A", "Obj_LiftRockWhite_A_01:Animal_Insect_A", "Item_Plant_O", "Item_Fruit_E",
+			var presets = {"AttackUp":["Animal_Insect_G", "Item_Plant_G", "Item_Fruit_H", "Item_Mushroom_L",
+									   "Animal_Fish_E", "Item_FishGet_E", "Animal_Insect_K", "Animal_Fish_F", "Item_FishGet_F"],
+						   "MovingSpeed":["Animal_Insect_S", "Item_MushroomGet_D", "Item_Mushroom_D", "Item_PlantGet_M",
+										  "Item_Plant_M", "Animal_Insect_A", "Item_Plant_O", "Item_Fruit_E",
 										  "Item_PlantGet_O"],
-						   "Fireproof":["Animal_Insect_X", "Obj_LiftRockEldin_A_01:Animal_Insect_X"],
+						   "Fireproof":["Animal_Insect_X"],
 						   "Cooking Pots":["Item_CookSet","Item_CookSet_PanOnly"],
-						   "Horses":["GameRomHorse00L","WildHorseCreateTag","WildHorseCreateTag01","WildHorseCreateTag02",
-									 "WildHorseCreateTag03","GameRomHorseBone","GameRomHorseNushi","GameRomHorseZelda","Enemy_Bokoblin_Bone_Junior:GameRomHorseBone"],
+						   "Horses":["WildHorseCreateTag","WildHorseCreateTag01","WildHorseCreateTag02",
+									 "WildHorseCreateTag03","GameRomHorseBone","GameRomHorseNushi","GameRomHorseZelda","GameRomHorse00L"],
 						   "Overworld Bosses":["Enemy_Giant_Bone","Enemy_Giant_Bone_AllDay","Enemy_Giant_Junior","Enemy_Giant_Middle","Enemy_Giant_Senior",
 											   "Enemy_Golem_Fire","Enemy_Golem_Ice","Enemy_Golem_Junior","Enemy_Golem_Middle","Enemy_Golem_Senior",
 											   "Enemy_Lynel_Dark","Enemy_Lynel_Junior","Enemy_Lynel_Junior_Mountain","Enemy_Lynel_Middle","Enemy_Lynel_Senior",
 											   "Enemy_Sandworm","Enemy_Assassin_Senior"],
+						   "Treasure Chests":["TBox"],
 						   "Nothing":[]};
 			
 			var map = L.map('botw_map', {
@@ -111,7 +113,8 @@
 							 L.divIcon({className: 'div-icon8'}),
 							 L.divIcon({className: 'div-icon9'}),
 							 L.divIcon({className: 'div-icon10'}),
-							 L.divIcon({className: 'div-icon11'})];
+							 L.divIcon({className: 'div-icon11'}),
+							 L.divIcon({className: 'div-icon12'})];
 							 
 				var markers = {};
 
@@ -194,16 +197,21 @@
 
 			});
 
-			// Turns a string into some consistent value, similar to a hash
+			// hash the string
 			function stringToValue(str) {
-				var validBase36String = str.replace(/[^0-9a-z]/gi, '');
-				return parseInt(validBase36String, 36);
+				var hash = 0;
+				for (i = 0; i < str.length; i++) {
+					char = str.charCodeAt(i);
+					hash = ((hash<<5)-hash)+char;
+					hash = hash & hash;
+				}
+				return Math.abs(hash);
 			};
 
 			function showPreset(name) {
 				$('input:checked').prop('checked', false).trigger("change");
 				for (var i=0; i<presets[name].length; i++) {
-					$('input[name="'+presets[name][i]+'"]').prop('checked', true).trigger("change");
+					$('input[name*="'+presets[name][i]+'"]').prop('checked', true).trigger("change");
 				}
 			};
 
