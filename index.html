@@ -57,7 +57,7 @@
 		<div id="sidebar">
 			<div>
 				<select id="filter" data-placeholder="Choose a filter..." multiple></select><br>
-				<input type="checkbox" id="selectAll" disabled title="Toggle search matches" autocomplete="off"/>
+				<button id="selectAll" title="Select all filtered items" disabled>All</button><button id="selectNone" title="Deselect all filtered items">None</button>
 				<input type="text" class="search" title="Search by name..." autocomplete="off"/>
 			</div>
 			<ul class="list"></ul>
@@ -187,12 +187,12 @@
 					}
 				});
 
-				$('#selectAll').change(function() {
-					if ($(this).is(':checked')) {
-						$('.list input:checkbox:not(:checked)').prop('checked', true).trigger('change');
-					} else {
-						$('.list input:checkbox:checked').prop('checked', false).trigger('change');
-					}
+				$('#selectAll').click(function() {
+					$('.list input:checkbox:not(:checked)').prop('checked', true).trigger('change');
+				});
+
+				$('#selectNone').click(function() {
+					$('.list input:checkbox:checked').prop('checked', false).trigger('change');
 				});
 
 				sidebarList.on('searchComplete', setSelectAllSafety);
