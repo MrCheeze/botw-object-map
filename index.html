@@ -4,9 +4,11 @@
 		<script src='jquery-1.12.0.min.js'></script>
 		<link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.3/dist/leaflet.css" />
 		<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.0.4/dist/MarkerCluster.css" />
+		<link rel="stylesheet" href="chosen.min.css" />
 		<script src="https://unpkg.com/leaflet@1.0.3/dist/leaflet.js"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/list.js/1.5.0/list.min.js"></script>
 		<script src="leaflet.markercluster.js"></script>
+		<script src="chosen.jquery.min.js"></script>
 		<style>
 		#botw_map {
 			display: inline-block;
@@ -20,9 +22,12 @@
 			overflow: scroll;
 			white-space: nowrap;
 		}
-		#sidebar li, #sidebar ul {
+		#sidebar > .list li, #sidebar > .list {
 			list-style-type: none;
 			padding: 0;
+		}
+		#filter {
+			width: 300px;
 		}
 		.div-icon0 { border-radius: 50%; border: 1px solid #00FFFF; background: rgba(0,255,255,0.25)}
 		.div-icon1 { border-radius: 50%; border: 1px solid #FFFF00; background: rgba(255,255,0,0.25) }
@@ -51,7 +56,8 @@
 		<div id="botw_map"></div>
 		<div id="sidebar">
 			<div>
-				<input type="checkbox" id="selectAll" disabled title="Toggle search matches" autocomplete="off"/>
+				<select id="filter" data-placeholder="Choose a filter..." multiple></select><br>
+				<button id="selectAll" title="Select all filtered items" disabled>All</button><button id="selectNone" title="Deselect all filtered items">None</button>
 				<input type="text" class="search" title="Search by name..." autocomplete="off"/>
 			</div>
 			<ul class="list"></ul>
@@ -71,8 +77,7 @@
 											   "Enemy_Golem_Fire","Enemy_Golem_Ice","Enemy_Golem_Junior","Enemy_Golem_Middle","Enemy_Golem_Senior",
 											   "Enemy_Lynel_Dark","Enemy_Lynel_Junior","Enemy_Lynel_Junior_Mountain","Enemy_Lynel_Middle","Enemy_Lynel_Senior",
 											   "Enemy_Sandworm","Enemy_Assassin_Senior"],
-						   "Treasure Chests":["TBox"],
-						   "Nothing":[]};
+						   "Treasure Chests":["TBox"]};
 			
 			var map = L.map('botw_map', {
 				preferCanvas: true,
@@ -102,20 +107,7 @@
 
 				$('#sidebar > ul').append(listHtml);
 
-				var icons = [L.divIcon({className: 'div-icon0'}),
-							 L.divIcon({className: 'div-icon1'}),
-							 L.divIcon({className: 'div-icon2'}),
-							 L.divIcon({className: 'div-icon3'}),
-							 L.divIcon({className: 'div-icon4'}),
-							 L.divIcon({className: 'div-icon5'}),
-							 L.divIcon({className: 'div-icon6'}),
-							 L.divIcon({className: 'div-icon7'}),
-							 L.divIcon({className: 'div-icon8'}),
-							 L.divIcon({className: 'div-icon9'}),
-							 L.divIcon({className: 'div-icon10'}),
-							 L.divIcon({className: 'div-icon11'}),
-							 L.divIcon({className: 'div-icon12'})];
-							 
+				var icons = Array.from(Array(12).keys()).map(i => L.divIcon({className: 'div-icon' + i}));
 				var markers = {};
 
 				var markerClusterGroupOptions = {
@@ -177,24 +169,37 @@
 				});
 
 				var sidebarList = new List("sidebar", { valueNames: ['itemName'] });
-				
-				var preset_names = Object.keys(presets);
-				for (var i=0; i<preset_names.length; i++) {
-					$('body').append('<div><a href="javascript:showPreset(\''+preset_names[i]+'\')">Preset: '+preset_names[i]+'</div>');
-				}
 
-				$('#selectAll').change(function() {
-					if ($(this).is(':checked')) {
-						$('.list input:checkbox:not(:checked)').prop('checked', true).trigger('change');
+				// Create preset filters
+				var presetOptions = Object.keys(presets).map(presetName => '<option>' + presetName + '</option>');
+				$('#filter').append(presetOptions.join(""));
+				$("#filter").chosen().change(function(){
+					var selectedOptions = $(this).val();
+					if (!selectedOptions) {
+						sidebarList.filter();
 					} else {
-						$('.list input:checkbox:checked').prop('checked', false).trigger('change');
+						var regexList = $(this).val().map(presetName => new RegExp('.*(' + presets[presetName].join("|") + ').*'));
+						sidebarList.filter(item => {
+							var itemName = item.values().itemName;
+							return regexList.every(regex => regex.test(itemName));
+						});
 					}
 				});
 
-				sidebarList.on('searchComplete', function() {
-					$('#selectAll').prop('disabled', sidebarList.matchingItems.length > 1000);
+				$('#selectAll').click(function() {
+					$('.list input:checkbox:not(:checked)').prop('checked', true).trigger('change');
 				});
 
+				$('#selectNone').click(function() {
+					$('.list input:checkbox:checked').prop('checked', false).trigger('change');
+				});
+
+				sidebarList.on('searchComplete', setSelectAllSafety);
+				sidebarList.on('filterComplete', setSelectAllSafety);
+
+				function setSelectAllSafety() {
+					$('#selectAll').prop('disabled', sidebarList.matchingItems.length > 1000);
+				}
 			});
 
 			// hash the string
@@ -206,13 +211,6 @@
 					hash = hash & hash;
 				}
 				return Math.abs(hash);
-			};
-
-			function showPreset(name) {
-				$('input:checked').prop('checked', false).trigger("change");
-				for (var i=0; i<presets[name].length; i++) {
-					$('input[name*="'+presets[name][i]+'"]').prop('checked', true).trigger("change");
-				}
 			};
 
 			function getDisplayName(internalName) {
