@@ -75,9 +75,9 @@
 		<div id="botw_map"></div>
 		<div id="sidebar">
 			<div>
-				<select id="filter" data-placeholder="Choose a filter..." multiple></select><br>
+				<select id="filter" data-placeholder="Filter by preset..." multiple></select><br>
 				<button id="selectAll" title="Select all filtered items" disabled>All</button><button id="selectNone" title="Deselect all filtered items">None</button>
-				<input type="text" class="search" title="Search by name..." autocomplete="off"/>
+				<input type="text" class="search" title="Filter by name..." autocomplete="off"/>
 			</div>
 			<ul class="list"></ul>
 		</div>
@@ -230,11 +230,11 @@
 				return Math.abs(hash);
 			};
 			function renderListItem(internal_name) {
-				var s = '<li><label><input type="checkbox" name="' + internal_name + '">';
+				var s = '<li><label><input type="checkbox" name="' + internal_name + '"><span class="itemName">';
 				if (locations[internal_name].display_name !== internal_name) {
 					s += '<span class="display-name">' + locations[internal_name].display_name + '</span> <span class="name-separator">—</span> ';
 				}
-				s += '<span class="internal-name">' + internal_name + '</span></label></li>';
+				s += '<span class="internal-name">' + internal_name + '</span></span></label></li>';
 				return s;
 			};
 		</script>
