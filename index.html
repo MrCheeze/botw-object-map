@@ -1,6 +1,7 @@
 <html>
 	<head>
 		<title>Breath of the Wild Object Map</title>
+		<meta charset="utf-8">
 		<script src='jquery-1.12.0.min.js'></script>
 		<link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.3/dist/leaflet.css" />
 		<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.0.4/dist/MarkerCluster.css" />
@@ -10,6 +11,15 @@
 		<script src="leaflet.markercluster.js"></script>
 		<script src="chosen.jquery.min.js"></script>
 		<style>
+		body {
+			background: #3e443b;
+			color: #dadad3;
+			font-family: sans-serif;
+			font-size: small;
+		}
+		.leaflet-container {
+			background-color: rgba(255,0,0,0.0);
+		}
 		#botw_map {
 			display: inline-block;
 			height: 99%;
@@ -28,6 +38,15 @@
 		}
 		#filter {
 			width: 300px;
+		}
+		.display-name {
+			font-style: italic;
+		}
+		.name-separator {
+			color: #8c8f87;
+		}
+		.internal-name {
+			font-family: monospace;
 		}
 		.div-icon0 { border-radius: 50%; border: 1px solid #00FFFF; background: rgba(0,255,255,0.25)}
 		.div-icon1 { border-radius: 50%; border: 1px solid #FFFF00; background: rgba(255,255,0,0.25) }
@@ -101,9 +120,7 @@
 			$.getScript(locationfile, function() {
 				
 				var internal_names = Object.keys(locations).sort();
-				var listHtml = internal_names.map(internal_name =>
-					'<li><label><input type="checkbox" name="' + internal_name + '"/><span class="itemName">' + getDisplayName(internal_name) + '</span></label></li>'
-					).join("");
+				var listHtml = internal_names.map(renderListItem).join("");
 
 				$('#sidebar > ul').append(listHtml);
 
@@ -152,7 +169,7 @@
 						var markerOptions = {
 							icon: icons[stringToValue(this.name) % icons.length],
 							keyboard: false,
-							title: getDisplayName(this.name)
+							title: this.name
 						};
 
 						var targetLocations = locations[this.name].locations;
@@ -212,13 +229,13 @@
 				}
 				return Math.abs(hash);
 			};
-
-			function getDisplayName(internalName) {
-				if (internalName == locations[internalName].display_name) {
-					return internalName;
-				} else {
-					return locations[internalName].display_name + ' -- ' + internalName;
+			function renderListItem(internal_name) {
+				var s = '<li><label><input type="checkbox" name="' + internal_name + '">';
+				if (locations[internal_name].display_name !== internal_name) {
+					s += '<span class="display-name">' + locations[internal_name].display_name + '</span> <span class="name-separator">—</span> ';
 				}
+				s += '<span class="internal-name">' + internal_name + '</span></label></li>';
+				return s;
 			};
 		</script>
 	</body>
