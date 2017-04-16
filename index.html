@@ -48,6 +48,9 @@
 		.internal-name {
 			font-family: monospace;
 		}
+		.itemName {
+			display: none;
+		}
 		.div-icon0 { border-radius: 50%; border: 1px solid #00FFFF; background: rgba(0,255,255,0.25)}
 		.div-icon1 { border-radius: 50%; border: 1px solid #FFFF00; background: rgba(255,255,0,0.25) }
 		.div-icon2 { border-radius: 50%; border: 1px solid #FF00FF; background: rgba(255,0,255,0.25) }
@@ -169,7 +172,7 @@
 						var markerOptions = {
 							icon: icons[stringToValue(this.name) % icons.length],
 							keyboard: false,
-							title: this.name
+							title: getExpandedName(this.name)
 						};
 
 						var targetLocations = locations[this.name].locations;
@@ -229,12 +232,15 @@
 				}
 				return Math.abs(hash);
 			};
+			function getExpandedName(internal_name) {
+				return ((locations[internal_name].display_name !== internal_name) ? locations[internal_name].display_name + ' — ': '') + internal_name;
+			}
 			function renderListItem(internal_name) {
-				var s = '<li><label><input type="checkbox" name="' + internal_name + '"><span class="itemName">';
+				var s = '<li><label><input type="checkbox" name="' + internal_name + '">';
 				if (locations[internal_name].display_name !== internal_name) {
 					s += '<span class="display-name">' + locations[internal_name].display_name + '</span> <span class="name-separator">—</span> ';
 				}
-				s += '<span class="internal-name">' + internal_name + '</span></span></label></li>';
+				s += '<span class="internal-name">' + internal_name + '</span><span class="itemName">'+getExpandedName(internal_name)+'</span></label></li>';
 				return s;
 			};
 		</script>
